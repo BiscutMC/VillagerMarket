@@ -138,3 +138,12 @@ sounds:
 #Blacklisted items
 item_blacklist:
   - DEAD_BUSH
+
+
+#----------------------- Biscut settings -----------------------#
+price_change:
+  rare: 0.02 # What amount does an uncommon item decrease in value when overstocked by 1
+  common: 0.001 # What amount does a common item change in value when over/understocked by 1
+  general: 0.03 # What amount does an item that doesn't belong to a shop change in value when over/understocker by 1
+
+common_item_threshold: 20

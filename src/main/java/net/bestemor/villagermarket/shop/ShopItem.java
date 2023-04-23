@@ -43,9 +43,12 @@ public class ShopItem {
 
     private BigDecimal sellPrice;
     private BigDecimal buyPrice;
-    private int amount;
+    private float resetTime;
+    private int baseAmount; // Esto es nuevo
+    private int amount; // est
     private int itemTradeAmount = 0;
     private ItemStack itemTrade;
+    private boolean commonItem = false;
 
     private int discount = 0;
     private int limit = 0;
@@ -68,6 +71,7 @@ public class ShopItem {
         this.slot = slot;
         this.item = item;
         this.amount = item.getAmount();
+        this.baseAmount = item.getAmount(); // Base Amount should be the starting amount, and not be updated per sale.
     }
     public ShopItem(VMPlugin plugin, ConfigurationSection section) {
         this.plugin = plugin;
@@ -125,7 +129,7 @@ public class ShopItem {
         if (sellPrice == null) {
             return BigDecimal.ZERO;
         } else if (!applyDiscount || discount <= 0) {
-            return sellPrice;
+            return sellPrice.subtract(BigDecimal.valueOf((amount - baseAmount) * getItemPricePercentageChange()));
         } else {
             return sellPrice.subtract(sellPrice.multiply(BigDecimal.valueOf(discount / 100.0)));
         }
@@ -139,7 +143,7 @@ public class ShopItem {
         } else if (buyPrice == null) {
             return BigDecimal.ZERO;
         } else if (!applyDiscount || discount <= 0) {
-            return buyPrice;
+            return buyPrice.subtract(BigDecimal.valueOf((amount - baseAmount) * getItemPricePercentageChange()));
         } else {
             return buyPrice.subtract(buyPrice.multiply(BigDecimal.valueOf(discount / 100.0)));
         }
@@ -198,6 +202,7 @@ public class ShopItem {
     public void setAmount(int amount) {
         this.item.setAmount(amount > item.getMaxStackSize() ? 1 : amount);
         this.amount = amount;
+        this.commonItem = this.amount >= plugin.getConfig().getInt("price_change.common_item_threshold");
     }
     public void addCommand(String command) {
         this.mode = ItemMode.COMMAND;
@@ -471,5 +476,9 @@ public class ShopItem {
         } else {
             return WordUtils.capitalizeFully(i.getType().name().replaceAll("_", " "));
         }
+    }
+
+    private double getItemPricePercentageChange() {
+        return (commonItem ? plugin.getConfig().getDouble("price_change.common") : plugin.getConfig().getDouble("price_change.rare"));
     }
 }
