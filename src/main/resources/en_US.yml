@@ -47,6 +47,7 @@ messages:
   add_successful: "&aItem added successfully."
   type_price: "&bPlease type the item price in the chat..."
   type_amount: "&bPlease type the amount you wish to sell/buy in the chat..."
+  type_stock: "&bPlease type the stock of the item in chat..."
   #Placeholder: %cancel% (see cancel option above)
   type_cancel: "&bOr type &c%cancel% &bto cancel"
   sold_shop: "&bShop sold! It is now available for purchase again."

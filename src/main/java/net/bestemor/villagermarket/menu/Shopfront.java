@@ -350,14 +350,19 @@ public class Shopfront {
                     }
 
                     shopItem.setSellPrice(price);
+                    player.sendMessage(ConfigManager.getMessage("message.type_stock"));
 
-                    shop.getShopfrontHolder().getItemList().put(shopItem.getSlot(), shopItem);
-                    Bukkit.getScheduler().runTaskAsynchronously(plugin, Shopfront.this.holder::update);
+                    plugin.getChatListener().addDecimalListener(player, (stock) -> {
+                        shopItem.setBaseStock(stock.intValue());
 
-                    player.sendMessage(ConfigManager.getMessage("messages.add_successful"));
+                        shop.getShopfrontHolder().getItemList().put(shopItem.getSlot(), shopItem);
+                        Bukkit.getScheduler().runTaskAsynchronously(plugin, Shopfront.this.holder::update);
 
-                    open(player, Type.EDITOR);
-                    player.playSound(player.getLocation(), ConfigManager.getSound("sounds.add_item"), 0.5f, 1);
+                        player.sendMessage(ConfigManager.getMessage("messages.add_successful"));
+
+                        open(player, Type.EDITOR);
+                        player.playSound(player.getLocation(), ConfigManager.getSound("sounds.add_item"), 0.5f, 1);
+                    });
                 });
             });
         }

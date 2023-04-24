@@ -27,16 +27,20 @@ public class AdminShop extends VillagerShop {
         ShopItem shopItem = shopfrontHolder.getItemList().get(slot);
         Economy economy = plugin.getEconomy();
 
-        BigDecimal price = shopItem.getSellPrice();
+        BigDecimal price = shopItem.changedBuyPrice;
 
         if (!shopItem.verifyPurchase(player, ItemMode.SELL)) {
             return;
         }
+        shopItem.addStock(-shopItem.getAmount());
+        shopItem.applyStockBuyPriceChange();
         CurrencyBuilder message = ConfigManager.getCurrencyBuilder("messages.bought_item_as_customer")
                 .replace("%amount%", String.valueOf(shopItem.getAmount()))
                 .replace("%item%", shopItem.getItemName())
                 .replace("%shop%", getShopName())
                 .addPrefix();
+
+        player.sendMessage("Stock actual del item" + String.valueOf(shopItem.getCurrentStock()));
 
         if (shopItem.isItemTrade()) {
             message.replace("%price%", shopItem.getItemTradeAmount() + "x " + shopItem.getItemTradeName());
@@ -72,17 +76,21 @@ public class AdminShop extends VillagerShop {
         Economy economy = plugin.getEconomy();
 
         int amount = shopItem.getAmount();
-        BigDecimal price = shopItem.getBuyPrice();
+        BigDecimal price = shopItem.changedSellPrice;
 
         if (!shopItem.verifyPurchase(player, ItemMode.BUY)) {
             return;
         }
+        shopItem.addStock(shopItem.getAmount());
+        shopItem.applyStockSellPriceChange();
 
         player.sendMessage(ConfigManager.getCurrencyBuilder("messages.sold_item_as_customer")
                 .replace("%amount%", String.valueOf(shopItem.getAmount()))
                 .replaceCurrency("%price%", price)
                 .replace("%item%", shopItem.getItemName())
                 .replace("%shop%", getShopName()).build());
+
+        player.sendMessage("Stock actual del item" + String.valueOf(shopItem.getCurrentStock()));
 
         economy.depositPlayer(player, price.doubleValue());
         removeItems(player.getInventory(), shopItem.getRawItem(), shopItem.getAmount());

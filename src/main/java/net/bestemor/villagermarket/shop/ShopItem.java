@@ -34,17 +34,18 @@ public class ShopItem {
 
     private final VMPlugin plugin;
     private final ItemStack item;
-
     private final int slot;
-
     private boolean isAdmin;
 
     private List<String> editorLore = new ArrayList<>();
 
     private BigDecimal sellPrice;
     private BigDecimal buyPrice;
+    public BigDecimal changedSellPrice;
+    public BigDecimal changedBuyPrice;
     private float resetTime;
-    private int baseAmount; // Esto es nuevo
+    private int baseStock; // Esto es nuevo
+    private int currentStock;
     private int amount; // est
     private int itemTradeAmount = 0;
     private ItemStack itemTrade;
@@ -71,7 +72,6 @@ public class ShopItem {
         this.slot = slot;
         this.item = item;
         this.amount = item.getAmount();
-        this.baseAmount = item.getAmount(); // Base Amount should be the starting amount, and not be updated per sale.
     }
     public ShopItem(VMPlugin plugin, ConfigurationSection section) {
         this.plugin = plugin;
@@ -129,7 +129,7 @@ public class ShopItem {
         if (sellPrice == null) {
             return BigDecimal.ZERO;
         } else if (!applyDiscount || discount <= 0) {
-            return sellPrice.subtract(BigDecimal.valueOf((amount - baseAmount) * getItemPricePercentageChange()));
+            return sellPrice;
         } else {
             return sellPrice.subtract(sellPrice.multiply(BigDecimal.valueOf(discount / 100.0)));
         }
@@ -143,7 +143,7 @@ public class ShopItem {
         } else if (buyPrice == null) {
             return BigDecimal.ZERO;
         } else if (!applyDiscount || discount <= 0) {
-            return buyPrice.subtract(BigDecimal.valueOf((amount - baseAmount) * getItemPricePercentageChange()));
+            return buyPrice;
         } else {
             return buyPrice.subtract(buyPrice.multiply(BigDecimal.valueOf(discount / 100.0)));
         }
@@ -183,6 +183,7 @@ public class ShopItem {
     public int getItemTradeAmount() {
         return itemTradeAmount;
     }
+    public int getCurrentStock() {return this.currentStock;}
 
     public Map<UUID, Integer> getPlayerLimits() {
         return playerLimits;
@@ -192,12 +193,18 @@ public class ShopItem {
     }
     public void setSellPrice(BigDecimal sellPrice) {
         this.sellPrice = sellPrice;
+        this.changedSellPrice = sellPrice;
     }
     public void setBuyPrice(BigDecimal buyPrice) {
         this.buyPrice = buyPrice;
+        this.changedBuyPrice = buyPrice;
     }
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+    public void setBaseStock(int stock) {
+        this.baseStock = stock;
+        this.currentStock = stock;
     }
     public void setAmount(int amount) {
         this.item.setAmount(amount > item.getMaxStackSize() ? 1 : amount);
@@ -218,6 +225,10 @@ public class ShopItem {
 
     public void resetCommand() {
         this.commands.clear();
+    }
+
+    public void addStock(int amount) {
+        this.currentStock += amount;
     }
 
 
@@ -476,6 +487,14 @@ public class ShopItem {
         } else {
             return WordUtils.capitalizeFully(i.getType().name().replaceAll("_", " "));
         }
+    }
+
+    public void applyStockBuyPriceChange() {
+        changedBuyPrice = (BigDecimal.valueOf((currentStock - baseStock) * getItemPricePercentageChange()));
+    }
+
+    public void applyStockSellPriceChange() {
+        changedSellPrice = (BigDecimal.valueOf((currentStock - baseStock) * getItemPricePercentageChange()));
     }
 
     private double getItemPricePercentageChange() {
