@@ -27,7 +27,7 @@ public class AdminShop extends VillagerShop {
         ShopItem shopItem = shopfrontHolder.getItemList().get(slot);
         Economy economy = plugin.getEconomy();
 
-        BigDecimal price = shopItem.changedBuyPrice;
+        BigDecimal price = shopItem.getBuyPrice();
 
         if (!shopItem.verifyPurchase(player, ItemMode.SELL)) {
             return;
@@ -76,7 +76,7 @@ public class AdminShop extends VillagerShop {
         Economy economy = plugin.getEconomy();
 
         int amount = shopItem.getAmount();
-        BigDecimal price = shopItem.changedSellPrice;
+        BigDecimal price = shopItem.getSellPrice();
 
         if (!shopItem.verifyPurchase(player, ItemMode.BUY)) {
             return;

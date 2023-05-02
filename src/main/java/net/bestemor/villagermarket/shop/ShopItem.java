@@ -129,7 +129,7 @@ public class ShopItem {
         if (sellPrice == null) {
             return BigDecimal.ZERO;
         } else if (!applyDiscount || discount <= 0) {
-            return sellPrice;
+            return BigDecimal.valueOf(sellPrice.intValue() - (currentStock - baseStock) * getItemPricePercentageChange());
         } else {
             return sellPrice.subtract(sellPrice.multiply(BigDecimal.valueOf(discount / 100.0)));
         }
@@ -143,7 +143,7 @@ public class ShopItem {
         } else if (buyPrice == null) {
             return BigDecimal.ZERO;
         } else if (!applyDiscount || discount <= 0) {
-            return buyPrice;
+            return BigDecimal.valueOf(buyPrice.intValue() - (currentStock - baseStock) * getItemPricePercentageChange());
         } else {
             return buyPrice.subtract(buyPrice.multiply(BigDecimal.valueOf(discount / 100.0)));
         }
@@ -490,11 +490,11 @@ public class ShopItem {
     }
 
     public void applyStockBuyPriceChange() {
-        changedBuyPrice = (BigDecimal.valueOf((currentStock - baseStock) * getItemPricePercentageChange()));
+        changedBuyPrice = (BigDecimal.valueOf(getBuyPrice().intValue() - (currentStock - baseStock) * getItemPricePercentageChange()));
     }
 
     public void applyStockSellPriceChange() {
-        changedSellPrice = (BigDecimal.valueOf((currentStock - baseStock) * getItemPricePercentageChange()));
+        changedSellPrice = (BigDecimal.valueOf(getSellPrice().intValue() - (currentStock - baseStock) * getItemPricePercentageChange()));
     }
 
     private double getItemPricePercentageChange() {

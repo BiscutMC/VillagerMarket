@@ -350,7 +350,7 @@ public class Shopfront {
                     }
 
                     shopItem.setSellPrice(price);
-                    player.sendMessage(ConfigManager.getMessage("message.type_stock"));
+                    player.sendMessage(ConfigManager.getMessage("messages.type_stock"));
 
                     plugin.getChatListener().addDecimalListener(player, (stock) -> {
                         shopItem.setBaseStock(stock.intValue());
