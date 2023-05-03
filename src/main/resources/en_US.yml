@@ -63,6 +63,8 @@ messages:
   bought_item_as_owner: "&b%player%&7 sold you &b%amount%x %item%&7 for &a%price%&7."
   #Placeholders: %player%, %amount%, %material%, %price%
   sold_item_as_owner: "&b%player%&7 bought &b%amount%x %item%&7 from you for &a%price%&7."
+  change_shop_name: "&bPlease type the shop name in the chat..."
+  change_shop_name_set: "&aSuccessfully set name to: &r%name%&a."
   change_name: "&bPlease type the shop name in the chat..."
   change_name_set: "&aSuccessfully set name to: &r%name%&a."
   must_be_menulore: "&cPlease toggle back to &e&nmenu lore&c to sell/buy items!"
@@ -94,6 +96,7 @@ messages:
   trusted_removed: "&cPlayer removed!"
   region_no_access: "&cYou do not have access to this region!"
   no_permission_adminshop: "&cYou do not have permission to use this Admin Shop!"
+  no_perimssion_change_shop_name: "&cYou do not hav permission to change the shop name!"
   no_permission_change_name: "&cYou do not have permission to change name!"
   no_permission_command: "&cYou do not have permission to use this command!"
   no_permission_buy_shop: "&cYou do not have permission to buy shops!"
@@ -213,6 +216,12 @@ menus:
         lore:
           - "&7Click to edit the profession"
           - "&7of your villager"
+      #Change the shop name
+      change_shop_name:
+        material: ANVIL
+        name: "&eChange shop name"
+        lore:
+          - "&7Click to change the name of the shop"
       #Change villager name item
       change_name:
         material: NAME_TAG

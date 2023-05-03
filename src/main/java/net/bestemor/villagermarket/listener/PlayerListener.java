@@ -78,7 +78,7 @@ public class PlayerListener implements Listener {
         if (shop != null) {
             cachedEntities.put(event.getRightClicked().getUniqueId(), event.getRightClicked());
             event.setCancelled(true);
-            shop.setShopName(event.getRightClicked().getCustomName());
+            shop.setShopName(shop.getShopName());
 
             if (shop instanceof AdminShop) {
                 if (p.hasPermission("villagermarket.adminshops")) {

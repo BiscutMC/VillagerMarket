@@ -355,8 +355,8 @@ public abstract class VillagerShop {
         }
 
         Entity entity = VMUtils.getEntity(entityUUID);
-        this.shopName = entity == null ? null : entity.getCustomName();
-        return this.shopName == null ? "Unknown" : this.shopName;
+        String entityName = entity == null ? "Unknown" : entity.getCustomName();
+        return this.shopName == null ? entityName : this.shopName;
     }
 
     public void setShopName(String customName) {

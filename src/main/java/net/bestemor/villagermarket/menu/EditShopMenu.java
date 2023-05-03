@@ -99,6 +99,39 @@ public class EditShopMenu extends Menu {
           shop.openInventory(event.getWhoClicked(), ShopMenu.EDIT_VILLAGER);
         });
 
+        Clickable changeShopName = Clickable.of(ConfigManager.getItem("menus.edit_shop.items.change_shop_name").build(), event -> {
+            Player player = (Player) event.getWhoClicked();
+            if (!player.hasPermission("villagermarket.change_shop_name")) {
+                player.sendMessage(ConfigManager.getMessage("messages.no_permission_change_shop_name"));
+                return;
+            }
+
+            event.getView().close();
+            player.sendMessage(ConfigManager.getMessage("messages.change_name"));
+            plugin.getChatListener().addStringListener(player, (result) -> {
+
+                for (String word : ConfigManager.getStringList("villager.name_blacklist")) {
+                    if (result.toLowerCase(Locale.ROOT).contains(word)) {
+                        player.sendMessage(ConfigManager.getMessage("messages.name_blacklisted"));
+                        return;
+                    }
+                }
+                if (result.length() > ConfigManager.getInt("villager.max_name_length")) {
+                    player.sendMessage(ConfigManager.getMessage("messages.max_name_length")
+                            .replace("%limit%", String.valueOf(ConfigManager.getInt("villager.max_name_length"))));
+                    return;
+                }
+
+                String name = ChatColor.translateAlternateColorCodes('&', result);
+                String customName = shop instanceof PlayerShop ? ConfigManager.getString("villager.custom_name")
+                        .replace("%player%", player.getName())
+                        .replace("%custom_name%", name) : name;
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    shop.setShopName(customName);
+                });
+            });
+        });
+
         Clickable changeName = Clickable.of(ConfigManager.getItem("menus.edit_shop.items.change_name").build(), event -> {
 
             Player player = (Player) event.getWhoClicked();
@@ -130,7 +163,6 @@ public class EditShopMenu extends Menu {
 
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     Entity villager = VMUtils.getEntity(shop.getEntityUUID());
-                    shop.setShopName(customName);
                     if (plugin.isCitizensEnabled() && CitizensAPI.getNPCRegistry().isNPC(villager)) {
                         CitizensAPI.getNPCRegistry().getNPC(villager).setName(customName);
                     } else if (villager != null) {
@@ -149,6 +181,7 @@ public class EditShopMenu extends Menu {
             content.setClickable(23,  previewShop);
             content.setClickable(30,  editVillager);
             content.setClickable(32,  changeName);
+            content.setClickable(33, changeShopName);
         } else if (shop instanceof PlayerShop) {
 
             PlayerShop playerShop = (PlayerShop) shop;
